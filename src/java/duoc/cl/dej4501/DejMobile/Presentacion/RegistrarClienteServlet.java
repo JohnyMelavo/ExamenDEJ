@@ -20,18 +20,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.digest.DigestUtils;
 
-@WebServlet(name = "RegistrarClienteServlet", urlPatterns = {"/registrarClienteServlet","/registrarCliente"})
+@WebServlet(name = "RegistrarClienteServlet", urlPatterns = {"/registrarClienteServlet", "/registrarCliente"})
 public class RegistrarClienteServlet extends HttpServlet {
 
     @EJB
     private ClienteSessionBeans objClienteSessionBeans;
-   
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-    }
 
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -45,11 +44,11 @@ public class RegistrarClienteServlet extends HttpServlet {
         if (objClienteSessionBeans.buscaUsuarioXRut(rut) != null) {
             sesion.setAttribute("rutInvalidoMsg", "Rut ingresado ya se encuentra en el sistema");
             request.getRequestDispatcher("./RegistroCliente.jsp").forward(request, response);
-            
+
         }
-        String clave =DigestUtils.md5Hex(request.getParameter("txtClave"));
-        String confirmarClave =DigestUtils.md5Hex(request.getParameter("txtConfirmarClave"));
-        if (clave.equals(confirmarClave)==false) {
+        String clave = DigestUtils.md5Hex(request.getParameter("txtClave"));
+        String confirmarClave = DigestUtils.md5Hex(request.getParameter("txtConfirmarClave"));
+        if (clave.equals(confirmarClave) == false) {
             sesion.setAttribute("claveInvalidaMsg", "Password invalida");
             response.sendRedirect("RegistroCliente.jsp");
         }
@@ -61,17 +60,17 @@ public class RegistrarClienteServlet extends HttpServlet {
         int comuna = Integer.parseInt(request.getParameter("ddlComuna"));
         int telefono = Integer.parseInt(request.getParameter("txtTelefono"));
         ClienteDTO infoClienteDTO = new ClienteDTO(rut, clave, nombre, apellidoPaterno, apellidoMaterno, direccion, numeracion, comuna, telefono);
-         try {
+        try {
             objClienteSessionBeans.addCliente(infoClienteDTO);
             sesion.setAttribute("msgCorrecto", "Cliente Ingresado de forma correcta");
             response.sendRedirect("Login.jsp");
-            
+
         } catch (Exception ex) {
             sesion.setAttribute("msgError", "Cliente no pudo ingresar a la base de datos");
             response.sendRedirect("RegistroCliente.jsp");
-        }    
+        }
     }
-    
+
     @Override
     public String getServletInfo() {
         return "Short description";
